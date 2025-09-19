@@ -1,6 +1,6 @@
-import Income from "../models/incomeCreate,js"
+import Income from "../models/incomeCreate.js"
 
-const createIncome = async (res, req) => {
+const createIncome = async (req, res) => {
     try {
         const { amount, date, category, notes } = req.body;
         const income = new Income({
@@ -13,19 +13,22 @@ const createIncome = async (res, req) => {
         await income.save();
         res.status(201).json(income);
     } catch (error) {
-        res.status(500).json({ message: "Error creating income", error: err });
-
+        res.status(500).json({ message: "Error creating income", error: error.message });
     }
 }
 
 const getIncomes = async (req, res) => {
     try {
+        console.log("User from token:", req.user); // should show { id: "68ccdc028b53d487b1646f64" }
+
         const incomes = await Income.find({ userId: req.user.id }).sort({ date: -1 });
-        res.json(incomes);
-    } catch (err) {
-        res.status(500).json({ message: "Error fetching incomes", error: err });
+        res.status(200).json(incomes);
+    } catch (error) {
+        console.error("Error fetching incomes:", error);
+        res.status(500).json({ message: "Error fetching incomes", error: error.message });
     }
 };
+
 
 export default {
     createIncome,

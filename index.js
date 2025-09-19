@@ -2,17 +2,14 @@ import express from "express"
 import cors from "cors"
 import mongoose from "mongoose";
 import dotenv from "dotenv"
-import userRoute from "./routes/userRoutes.js"
+import Routes from "./routes/index.js"
 dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => {
-    res.send("backend working ")
-});
-app.use("/api/user", userRoute);
+app.use(Routes)
 
 mongoose.connect(process.env.MONGO_URL)
     .then(() => console.log("mongoDb connected"))
