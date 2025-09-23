@@ -19,12 +19,9 @@ const createIncome = async (req, res) => {
 
 const getIncomes = async (req, res) => {
     try {
-        console.log("User from token:", req.user); // should show { id: "68ccdc028b53d487b1646f64" }
-
         const incomes = await Income.find({ userId: req.user.id }).sort({ date: -1 });
         res.status(200).json(incomes);
     } catch (error) {
-        console.error("Error fetching incomes:", error);
         res.status(500).json({ message: "Error fetching incomes", error: error.message });
     }
 };

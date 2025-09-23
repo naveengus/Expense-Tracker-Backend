@@ -56,7 +56,32 @@ const login = async (req, res) => {
     }
 }
 
+// controllers/userControllers.js
+const getUser = async (req, res) => {
+    try {
+        // get user id from token (added in verify middleware)
+        let user = await userModel.findById(req.user.id).select("name email");
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json({
+            message: "Data fetch success",
+            data: user,
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: error.message || "Internal Server Error",
+            error,
+        });
+    }
+};
+
+
+
 export default {
     signup,
-    login
+    login,
+    getUser
 }
