@@ -56,11 +56,9 @@ const login = async (req, res) => {
     }
 }
 
-// controllers/userControllers.js
 const getUser = async (req, res) => {
     try {
-        // get user id from token (added in verify middleware)
-        let user = await userModel.findById(req.user.id).select("name email");
+        let user = await userModel.findById(req.user.id).select("name email profilePicture");
 
         if (!user) {
             return res.status(404).json({ message: "User not found" });
@@ -78,10 +76,34 @@ const getUser = async (req, res) => {
     }
 };
 
+const updateUser = async (req, res) => {
+    try {
+        const { name, profilePicture } = req.body;
+
+        const user = await userModel.findOneAndUpdate(
+            { _id: req.user.id },   // use _id from token
+            { $set: { name, profilePicture } },
+            { new: true }
+        );
+
+        if (!user) {
+            return res.status(404).json({ message: "User Not Found" });
+        }
+
+        res.json({
+            message: "User updated successfully",
+            user,
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Error updating user", error: error.message });
+    }
+};
+
 
 
 export default {
     signup,
     login,
-    getUser
+    getUser,
+    updateUser
 }

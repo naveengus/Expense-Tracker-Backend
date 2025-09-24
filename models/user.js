@@ -22,6 +22,10 @@ const userSchema = new Schema(
       required: true,
       minlength: 6,
     },
+    profilePicture: {
+      type: String, // store image URL (Cloudinary, AWS S3, etc.)
+      default: "",  // optional, empty if not uploaded yet
+    },
   },
   { timestamps: true }
 );
