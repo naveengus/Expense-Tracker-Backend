@@ -78,26 +78,23 @@ const getUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
-        const { name, profilePicture } = req.body;
+        const name = req.body.name; // multer parses this correctly
+        const profilePicture = req.file ? req.file.path.replace(/\\/g, "/") : undefined;
 
-        const user = await userModel.findOneAndUpdate(
-            { _id: req.user.id },   // use _id from token
-            { $set: { name, profilePicture } },
+        const user = await userModel.findByIdAndUpdate(
+            req.user.id,
+            { ...(name && { name }), ...(profilePicture && { profilePicture }) },
             { new: true }
         );
 
-        if (!user) {
-            return res.status(404).json({ message: "User Not Found" });
-        }
+        if (!user) return res.status(404).json({ message: "User Not Found" });
 
-        res.json({
-            message: "User updated successfully",
-            user,
-        });
+        res.json({ message: "User updated successfully", user });
     } catch (error) {
         res.status(500).json({ message: "Error updating user", error: error.message });
     }
 };
+
 
 
 
