@@ -79,11 +79,18 @@ const getUser = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const name = req.body.name; // multer parses this correctly
-        const profilePicture = req.file ? req.file.path.replace(/\\/g, "/") : undefined;
+        // const profilePicture = req.file ? req.file.path.replace(/\\/g, "/") : undefined;
+
+        let imageUrl;
+
+        if (req.file) {
+            // Cloudinary upload object returns 'path' or 'secure_url'
+            imageUrl = req.file.path || req.file.secure_url || `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+        }
 
         const user = await userModel.findByIdAndUpdate(
             req.user.id,
-            { ...(name && { name }), ...(profilePicture && { profilePicture }) },
+            { ...(name && { name }), ...(imageUrl && { profilePicture: imageUrl }), },
             { new: true }
         );
 
